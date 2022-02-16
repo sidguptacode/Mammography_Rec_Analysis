@@ -1,5 +1,2 @@
-# starter_folder
+# Analyzing Mammography Recommendations
 
-This repo....
-
-It is organised as follows...
