@@ -49,6 +49,13 @@ brfss_2008$mam502y
 ```
 
 
+```{r}
+brfss_2008$rfmam2y
+```
+```{r}
+brfss_2008$hadmam
+```
+
 # Data
 
 TODO
