@@ -36,4 +36,6 @@ brfss_2008 <- read_xpt(
   .name_repair = "unique"
 )
 
-brfss_2008 <- clean_names(brfss_2008)
+brfss_2008_cleaned <- 
+  clean_names(brfss_2008) |>
+  select(rfmam2y, hadmam, mam502y, age)

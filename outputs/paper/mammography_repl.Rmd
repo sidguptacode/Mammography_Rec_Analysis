@@ -44,17 +44,27 @@ source(here::here("scripts/01-data_cleaning.R"), local = knitr::knit_global())
 ```
 
 ```{r}
-# Get the mammography records from BRFSS
-brfss_2008$mam502y
+brfss_2008_cleaned <- brfss_2008_cleaned |>
+  rename(over_40_person_had_ma = rfmam2y,over_50_person_had_mam = mam502y)
+brfss_2008_cleaned
+```
+```{r}
+brfss_2008_cleaned_count <-
+  brfss_2008_cleaned |>
+  count(hadmam)
+
+brfss_2008_cleaned_count |> head()
 ```
 
 
 ```{r}
-brfss_2008$rfmam2y
+brfss_2008_cleaned %>% 
+  ggplot(aes(age)) +
+  geom_histogram(bins=10) +
+  labs(x="Age", title="Distribution of mammography for age group")
 ```
-```{r}
-brfss_2008$hadmam
-```
+
+
 
 # Data
 
