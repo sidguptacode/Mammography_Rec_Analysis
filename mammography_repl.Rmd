@@ -1,0 +1,96 @@
+---
+title: "TODO"
+subtitle: "TODO"
+author: 
+  - TODO
+thanks: "Code and data are available at: https://github.com/sidguptacode/Mammography_Rec_Analysis"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "TODO"
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("bookdown")
+library(ggmap)
+library(dplyr)
+library(forcats)
+library(knitr)
+library(janitor)
+library(lubridate)
+library(opendatatoronto)
+library(tidyverse)
+library(tidyr)
+library(wrapr)
+library(haven)
+```
+
+# Introduction
+
+TODO
+
+```{r}
+
+# Run the RScript which imports required helper functions for this project.
+source("../../scripts/00-helpers.R", local = knitr::knit_global())
+
+# Run the RScript for initial data cleaning. This script gives us the following dataframes to work with:
+# brfss_2008: BRFSS health insurance data
+source(here::here("scripts/01-data_cleaning.R"), local = knitr::knit_global())
+
+```
+
+```{r}
+brfss_2008_cleaned <- brfss_2008_cleaned |>
+  rename(over_40_person_had_ma = rfmam2y,over_50_person_had_mam = mam502y)
+brfss_2008_cleaned
+```
+```{r, replicate Figure A.1, fig.align='center'}
+
+dist_mam <- brfss_2008_cleaned |>
+  group_by(age) |>
+  summarize(n = n())
+
+dist_mam2 <- brfss_2008_cleaned |>
+  filter(hadmam == 1)|>
+  group_by(age) |>
+  summarize(mam_ct = sum(hadmam))
+
+dist_mam <- dist_mam |> 
+  cbind(dist_mam2$mam_ct) |>
+  rename(mam_ct = 'dist_mam2$mam_ct') |>
+  mutate(share = mam_ct/n)
+  
+dist_mam |>
+ggplot(aes(age, share, fill = "BRFSS Survey"))+ 
+  geom_point(color = "grey")+
+  geom_line(color = "grey")+
+  xlim(35, 50)+
+  scale_y_continuous(breaks=seq(0, 0.7, by = 0.1))+
+  labs(x = "Age", y ="Share who had a mammogram",
+       title = "Mammogram rate in survey and claims data, by age")+
+  theme_minimal()
+
+
+```
+```{r, replicate Figure5}
+dist_deaths <- bc_deaths |>
+  group_by(age) |>
+  summarize(deaths = sum(bc_deaths))
+
+
+
+```
+
+
+
+# Data
+
+TODO
+
+# References
+
+
