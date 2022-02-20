@@ -6,6 +6,8 @@
 *.DS_Store*
 
 inputs/data/CDBRFS08.XPT
+inputs/data/*.xpt
+inputs/data/*.XPT
 
 # History files
 .Rhistory
