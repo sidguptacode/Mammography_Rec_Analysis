@@ -15,6 +15,9 @@ bibliography: references.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("bookdown")
+#install.packages('gridExtra')
+install.packages("hash")
+library(hash)
 library(ggmap)
 library(dplyr)
 library(forcats)
@@ -26,44 +29,113 @@ library(tidyverse)
 library(tidyr)
 library(wrapr)
 library(haven)
+library(ggplot2)
+library(gridExtra)
 ```
 
 # Introduction
 
-TODO
+Notes:
+- The original paper analyzed mammography recommendations with breast cancer deaths
+- We extend this work by considering other variables (e.g, state, smoking, etc) from the BRFSS.
+
 
 ```{r}
-
-# Run the RScript which imports required helper functions for this project.
-source("../../scripts/00-helpers.R", local = knitr::knit_global())
-
-# Run the RScript for initial data cleaning. This script gives us the following dataframes to work with:
-# brfss_2008: BRFSS health insurance data
-source(here::here("scripts/01-data_cleaning.R"), local = knitr::knit_global())
-
+################ Begin the data reading process ################
 ```
 
 ```{r}
-brfss_2008_cleaned <- brfss_2008_cleaned |>
+# Run the RScript for reading the dataset (this takes some time, and should only be run once on startup).
+brfss_2008 <- read_xpt(
+  here::here("inputs/data/CDBRFS08.XPT"),
+  skip = 0,
+  n_max = Inf,
+  .name_repair = "unique"
+)
+states_fips <- read_csv(here::here("inputs/data/states_fips.csv"))
+```
+
+
+```{r}
+################ Begin the data cleaning process ################
+```
+
+```{r}
+# Clean and rename the mammography columns.
+brfss_2008_cleaned <-
+  brfss_2008 |>
+  clean_names() |>
   rename(over_40_person_had_ma = rfmam2y,over_50_person_had_mam = mam502y)
-brfss_2008_cleaned
 ```
+
 ```{r}
-brfss_2008_cleaned_count <-
+colnames(brfss_2008_cleaned)
+```
+
+
+```{r}
+# Remove all rows which have no mammography information.
+brfss_2008_mam <-
   brfss_2008_cleaned |>
-  count(hadmam)
-
-brfss_2008_cleaned_count |> head()
+  filter(!(is.na(over_40_person_had_ma) & is.na(over_50_person_had_mam) & is.na(hadmam)))
 ```
 
+```{r, warning=FALSE}
+# The `state` column represents states as FIPS codes. Use a hash-map to substitute FIPS with state abbreviations.
+state_hashmap <- new.env()
+for (row in 1:nrow(states_fips)) {
+  state_fip <- as.character(states_fips[row, "st"])
+  state_name <-  as.character(states_fips[row, "stusps"])
+  state_hashmap[[state_fip]] <- state_name
+}
+```
 
 ```{r}
-brfss_2008_cleaned %>% 
+# Perform the cleaning of states names.
+brfss_2008_states_cleaned <-
+  brfss_2008_mam |>
+  # Some states have FIPS codes > 56, which is the maximum. This is for participants who did not respond with a state. We remove those participants.
+  filter(state <= 56) |>
+  mutate(state = as.character(state))
+# This applies the hashmap to each state.
+brfss_2008_states_cleaned$state <- unlist(mget(unlist(brfss_2008_states_cleaned$state), envir=state_hashmap))
+```
+
+```{r}
+################ Begin plotting: Figure 1 ################
+```
+
+```{r}
+# Get the distribution of mammography values
+brfss_2008_mam_count <-
+  brfss_2008_mam |>
+  select(over_40_person_had_ma, hadmam, over_50_person_had_mam, age) |>
+  count(hadmam)
+brfss_2008_mam_count |> head()
+```
+
+```{r}
+brfss_2008_mam %>% 
   ggplot(aes(age)) +
-  geom_histogram(bins=10) +
+  geom_bar() +
   labs(x="Age", title="Distribution of mammography for age group")
 ```
 
+
+```{r}
+################ Begin plotting: Our custom figures ################
+```
+
+```{r, fig.width=20, fig.height=20}  
+plot_df_group(brfss_2008_states_cleaned, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "))})
+```
+
+```{r, fig.width=20, fig.height=20}  
+plot_df_group(brfss_2008_states_cleaned, "smoke100", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$smoke100[1], sep=" "))})
+```
+```{r, fig.width=20, fig.height=20}  
+plot_df_group(brfss_2008_states_cleaned, "smokday2", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$smokday2[1], sep=" "))})
+```
 
 
 # Data

@@ -19,7 +19,7 @@ library(tidyverse)
 library(opendatatoronto)
 library(knitr)
 library(lubridate)
-library(tidyr)
+library(tidyr) 
 library(janitor)
 library(dplyr)
 
@@ -35,7 +35,3 @@ brfss_2008 <- read_xpt(
   n_max = Inf,
   .name_repair = "unique"
 )
-
-brfss_2008_cleaned <- 
-  clean_names(brfss_2008) |>
-  select(rfmam2y, hadmam, mam502y, age)
