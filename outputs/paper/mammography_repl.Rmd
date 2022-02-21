@@ -16,7 +16,7 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("bookdown")
 #install.packages('gridExtra')
-install.packages("hash")
+#install.packages("hash")
 library(hash)
 library(ggmap)
 library(dplyr)
@@ -33,6 +33,7 @@ library(ggplot2)
 library(gridExtra)
 ```
 
+
 # Introduction
 
 Notes:
@@ -45,80 +46,138 @@ Notes:
 ```
 
 ```{r}
-# Run the RScript for reading the dataset (this takes some time, and should only be run once on startup).
-brfss_2008 <- read_xpt(
-  here::here("inputs/data/CDBRFS08.XPT"),
-  skip = 0,
-  n_max = Inf,
-  .name_repair = "unique"
-)
-states_fips <- read_csv(here::here("inputs/data/states_fips.csv"))
-```
-
-
-```{r}
-################ Begin the data cleaning process ################
+# Import helper functions used throughout the project.
+#source(here::here("scripts/00-helpers.R"), local = knitr::knit_global())
 ```
 
 ```{r}
-# Clean and rename the mammography columns.
-brfss_2008_cleaned <-
-  brfss_2008 |>
-  clean_names() |>
-  rename(over_40_person_had_ma = rfmam2y,over_50_person_had_mam = mam502y)
-```
+# Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
-```{r}
-colnames(brfss_2008_cleaned)
-```
+# Store all the dataset paths in a list.
+brfss_data_paths <- list("inputs/data/CDBRFS00.XPT",  "inputs/data/cdbrfs02.xpt", "inputs/data/CDBRFS04.XPT",  "inputs/data/CDBRFS06.XPT",  "inputs/data/CDBRFS08.XPT",  "inputs/data/CDBRFS10.XPT",  "inputs/data/LLCP2012.XPT")
 
+#brfss_data_paths <- list("inputs/data/CDBRFS08.XPT")
 
-```{r}
-# Remove all rows which have no mammography information.
-brfss_2008_mam <-
-  brfss_2008_cleaned |>
-  filter(!(is.na(over_40_person_had_ma) & is.na(over_50_person_had_mam) & is.na(hadmam)))
-```
-
-```{r, warning=FALSE}
-# The `state` column represents states as FIPS codes. Use a hash-map to substitute FIPS with state abbreviations.
-state_hashmap <- new.env()
-for (row in 1:nrow(states_fips)) {
-  state_fip <- as.character(states_fips[row, "st"])
-  state_name <-  as.character(states_fips[row, "stusps"])
-  state_hashmap[[state_fip]] <- state_name
+# Define a function to read an XPT file as a dataframe.
+read_xpt_file <- function(xpt_file_path) {
+  xpt_df <- read_xpt(
+    here::here(xpt_file_path),
+    skip = 0,
+    n_max = Inf,
+    .name_repair = "unique"
+  )
+  return(xpt_df)
 }
+
+# Define a function to clean a BRFSS dataframe.
+clean_brfss_df <- function(brfss_data) {
+  ###   Intakes a BRFSS dataframe, selects the relevant columns, and cleans the values for states.
+  ###   brfss_data: a tibble dataframe
+  # Check if this dataframe has mammography columns. If not, we just return an empty dataframe.
+  brfss_cleaned <-
+    brfss_data |>
+    clean_names()
+  brfss_cols <- colnames(brfss_cleaned)
+  if(!( ("rfmam2y" %in% brfss_cols) & ("mam502y" %in% brfss_cols) & ("hadmam" %in% brfss_cols) & ("hlthplan" %in% brfss_cols) ) ) {
+    return(data.frame())
+  }
+  
+  # Clean and rename the mammography columns.
+  brfss_cleaned <-
+    brfss_cleaned |>
+    rename(over_40_person_had_mam = rfmam2y,over_50_person_had_mam = mam502y)
+
+  # Remove all rows which have no mammography information.
+  brfss_mam <-
+    brfss_cleaned |>
+    filter(!(is.na(over_40_person_had_mam) & is.na(over_50_person_had_mam) & is.na(hadmam)))
+
+  # Run the RScript which reads the CSVs for the FIPS codes in the States.
+  states_fips <- read_csv(here::here("inputs/data/states_fips.csv"))
+  # The `state` column represents states as FIPS codes. Use a hash-map to substitute FIPS with state abbreviations.
+  state_hashmap <- new.env()
+  for (row in 1:nrow(states_fips)) {
+    state_fip <- as.character(states_fips[row, "st"])
+    state_name <-  as.character(states_fips[row, "stusps"])
+    state_hashmap[[state_fip]] <- state_name
+  }
+
+  # Perform the cleaning of states names.
+  brfss_states_cleaned <-
+    brfss_mam |>
+    # Some states have FIPS codes > 56, which is the maximum. This is for participants who did not respond with a state. We remove those participants.
+    filter(state <= 56) |>
+    mutate(state = as.character(state))
+  # This applies the hashmap to each state.
+  brfss_states_cleaned$state <- unlist(mget(unlist(brfss_states_cleaned$state), envir=state_hashmap))
+  
+  # Now select only the columns that we care about to save memory.
+  brfss_cleaned <- 
+    brfss_states_cleaned |>
+    select(age, state, hadmam, over_40_person_had_mam, over_50_person_had_mam, hlthplan)
+
+  return(brfss_cleaned)
+}
+
+# For each BRFSS path, read it and clean it. lappy does this, and returns a list of cleaned BRFSS dataframes.\
+read_and_clean_brfss <- function(xpt_file_path) {
+  brfss_data <- read_xpt_file(xpt_file_path)
+  brfss_cleaned <- clean_brfss_df(brfss_data)
+  print(paste("Sucessfully read: ", xpt_file_path, sep=" "))
+  return(brfss_cleaned)
+}
+brfss_dfs <- lapply(brfss_data_paths, read_and_clean_brfss)
+
+# Concatenate all of the BRFSS dataframes into one
+brfss_data <- do.call(rbind, brfss_dfs)
 ```
 
 ```{r}
-# Perform the cleaning of states names.
-brfss_2008_states_cleaned <-
-  brfss_2008_mam |>
-  # Some states have FIPS codes > 56, which is the maximum. This is for participants who did not respond with a state. We remove those participants.
-  filter(state <= 56) |>
-  mutate(state = as.character(state))
-# This applies the hashmap to each state.
-brfss_2008_states_cleaned$state <- unlist(mget(unlist(brfss_2008_states_cleaned$state), envir=state_hashmap))
+# Read the data about breast cancer deaths.
+bc_deaths <- read.delim(
+  here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
 ```{r}
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r}
-# Get the distribution of mammography values
-brfss_2008_mam_count <-
-  brfss_2008_mam |>
-  select(over_40_person_had_ma, hadmam, over_50_person_had_mam, age) |>
-  count(hadmam)
-brfss_2008_mam_count |> head()
-```
+```{r, replicate Figure A.1, fig.align='center'}
 
-```{r}
-brfss_2008_mam %>% 
-  ggplot(aes(age)) +
-  geom_bar() +
-  labs(x="Age", title="Distribution of mammography for age group")
+dist_mam <- 
+  brfss_data |>
+  group_by(age) |>
+  summarize(n = n()) |>
+  drop_na()
+
+dist_mam2 <- brfss_data |>
+  filter(hadmam == 1 & hlthplan == 1)|>
+  group_by(age) |>
+  summarize(mam_ct = sum(hadmam))
+
+dist_mam3 <- dist_mam |> 
+  cbind(dist_mam2$mam_ct) |>
+  rename(mam_ct = 'dist_mam2$mam_ct') |>
+  mutate(share = mam_ct/n)
+  
+dist_mam3 |>
+ggplot(aes(age, share, fill = "BRFSS Survey"))+
+  geom_point(color = "grey")+
+  geom_line(color = "grey")+
+  xlim(35, 50)+
+  scale_y_continuous(breaks=seq(0, 0.7, by = 0.1))+
+  labs(x = "Age", y ="Share who had a mammogram",
+       title = "Mammogram rate in survey, by age")+
+  theme_minimal()
+
+
+```
+```{r, replicate Figure5}
+
+dist_deaths <- bc_deaths |>
+  group_by(age) |>
+  summarize(deaths = sum(bc_deaths))
+dist_deaths
 ```
 
 
@@ -126,21 +185,51 @@ brfss_2008_mam %>%
 ################ Begin plotting: Our custom figures ################
 ```
 
-```{r, fig.width=20, fig.height=20}  
-plot_df_group(brfss_2008_states_cleaned, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "))})
+```{r}
+# Helper functions which we will use.
+single_df_barplot <- function(df, xcol, xlab, ylab, title) {
+  ###   Intakes a dataframe with two columns representing x, y values, and plots a bar plot.
+  ###   Arguments and preconditions:
+  ###   df: a tibble dataframe
+  ###   xcol: a character string denoting the column for the x-values in the df
+  ###   ycol:  a character string denoting the column for the y-values in the df
+  ###   title: a character string denoting the title of the plot
+  ###   xlab:  a character string denoting the x-label of the plot
+  ###   ylab:  a character string denoting the y-label of the plot
+  ###   xcol and ycol must be columns in df.
+  barplot <- ggplot(data=df, aes(.data[[xcol]])) +
+    geom_bar() +
+    ggtitle(title) +
+    xlab(xlab) +
+    ylab(ylab) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  return(barplot)
+}
+
+
+plot_df_group <- function(df, group_col, plot_fn) {
+  ###   Intakes a dataframe with a column, and returns a grid of plots.
+  ###   Example: if group_col is STATE, then this function creates 50 plots in a grid, each containing data for each state.
+  ###   df: a tibble dataframe
+  ###   group_col: a character string denoting the column for to group by
+  ###   plot_fn: an R function used to plot the dataframes.
+  df_groups <- split(df, df[[group_col]])
+  df_plots <- lapply(df_groups, plot_fn)
+  num_plots <- length(df_plots)
+  num_cols <- floor(sqrt(num_plots))
+  do.call("grid.arrange", c(df_plots, ncol=num_cols))
+}
 ```
 
 ```{r, fig.width=20, fig.height=20}  
-plot_df_group(brfss_2008_states_cleaned, "smoke100", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$smoke100[1], sep=" "))})
+plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "))})
 ```
-```{r, fig.width=20, fig.height=20}  
-plot_df_group(brfss_2008_states_cleaned, "smokday2", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$smokday2[1], sep=" "))})
-```
-
 
 # Data
 
-TODO
+
+  The first figure we created shows the share of women who received a screening mammogram each year, by age. We are trying to replicate  figure A.1. from the original paper. Since we don’t have the dataset of the HCCI claims data. We replicated only the trendline with respect to the BRFSS survey.  The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. It should be strictly increasing as shown in the graph since it is cumulative. The data was gathered from Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. From age 35 to age 42, as age increases,more women started taking annual mammograms as well. . At the age of 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly and it keeps around  80 percent. At the end of  this trendline, there is still 20 percent of the women who haven't received a screening mammogram each year and they are unlikely to have them if they didn’t start it before 42. 
+
 
 # References
 
