@@ -1,5 +1,5 @@
 ---
-title: "TODO"
+title: "Raw mammography demographics identify important lifestyle features when recommending a screening"
 subtitle: "TODO"
 author: 
   - TODO
@@ -46,15 +46,10 @@ Notes:
 ```
 
 ```{r}
-# Import helper functions used throughout the project.
-source(here::here("scripts/00-helpers.R"), local = knitr::knit_global())
-```
-
-```{r}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
-brfss_data_paths <- list("inputs/data/CDBRFS00.XPT", "inputs/data/CDBRFS01.XPT", "inputs/data/cdbrfs02.xpt", "inputs/data/cdbrfs03.xpt", "inputs/data/CDBRFS04.XPT", "inputs/data/CDBRFS05.XPT", "inputs/data/CDBRFS06.XPT", "inputs/data/CDBRFS07.XPT", "inputs/data/CDBRFS08.XPT", "inputs/data/CDBRFS09.XPT", "inputs/data/CDBRFS10.XPT", "inputs/data/LLCP2011.XPT", "inputs/data/LLCP2012.XPT")
+brfss_data_paths <- list("inputs/data/CDBRFS00.XPT",  "inputs/data/cdbrfs02.xpt", "inputs/data/CDBRFS04.XPT",  "inputs/data/CDBRFS06.XPT",  "inputs/data/CDBRFS08.XPT",  "inputs/data/CDBRFS10.XPT",  "inputs/data/LLCP2012.XPT")
 
 #brfss_data_paths <- list("inputs/data/CDBRFS08.XPT")
 
@@ -130,7 +125,9 @@ brfss_dfs <- lapply(brfss_data_paths, read_and_clean_brfss)
 
 # Concatenate all of the BRFSS dataframes into one
 brfss_data <- do.call(rbind, brfss_dfs)
+
 ```
+
 
 ```{r}
 # Read the data about breast cancer deaths.
@@ -228,6 +225,10 @@ plot_df_group <- function(df, group_col, plot_fn) {
 
 ```{r, fig.width=20, fig.height=20}  
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "))})
+```
+
+```{r, fig.width=20, fig.height=20}  
+plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$hlthplan[1], sep=" "))})
 ```
 
 # Data
