@@ -220,7 +220,7 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 ```{r, mamograms_by_state, fig.width=20, fig.height=20} 
-plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 16)})
+plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
 ```
 
 
