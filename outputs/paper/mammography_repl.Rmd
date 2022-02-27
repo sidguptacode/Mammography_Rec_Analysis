@@ -133,7 +133,7 @@ bc_deaths <- read.delim(
 
 
 
-```{r mamogram_rate, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
+```{r, mamogram_rate, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
 
 dist_mam <- 
   brfss_data |>
@@ -164,7 +164,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r breast_cancer_deaths, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
+```{r, breast_cancer_deaths, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -210,13 +210,13 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 
-```{r mamograms_by_state, fig.width=70, fig.height=70, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
+```{r, mamograms_by_state, fig.width=70, fig.height=70, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
 
 
-```{r mamograms_by_insurance, fig.width=20, fig.height=20, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
+```{r, mamograms_by_insurance, fig.width=20, fig.height=20, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
@@ -239,7 +239,7 @@ Our second dataset is a version of the NBER dataset [@NBERw8134] which was alrea
 There might be biases in both of these datasets, and those biases are discussed thoroughly in our Discussion section.
 
 
-```{r first-row-brfss, echo = FALSE}
+```{r, first-row-brfss, echo = FALSE}
 knitr::kable(head(brfss_data, n=1),
   booktabs=TRUE,
   caption="One record in the processed BRFSS dataset. A value of 1 in the columns denotes \"Yes\", and a value of 0 denotes \"No\"",
@@ -248,7 +248,7 @@ knitr::kable(head(brfss_data, n=1),
 )
 ```
 
-```{r first-row-nber, echo = FALSE}
+```{r, first-row-nber, echo = FALSE}
 knitr::kable(head(dist_mam, n=4),
   booktabs=TRUE,
   caption="The first four records in the processed NBER dataset",
