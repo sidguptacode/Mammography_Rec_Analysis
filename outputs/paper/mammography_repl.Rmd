@@ -24,7 +24,6 @@ library(forcats)
 library(knitr)
 library(janitor)
 library(lubridate)
-library(opendatatoronto)
 library(tidyverse)
 library(tidyr)
 library(wrapr)
@@ -50,7 +49,7 @@ Notes:
 #source(here::here("scripts/00-helpers.R"), local = knitr::knit_global())
 ```
 
-```{r}
+```{r, cache=TRUE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -229,6 +228,14 @@ plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "A
 
 
   The first figure we created shows the share of women who received a screening mammogram each year, by age. We are trying to replicate  figure A.1. from the original paper. Since we don’t have the dataset of the HCCI claims data. We replicated only the trendline with respect to the BRFSS survey.  The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. It should be strictly increasing as shown in the graph since it is cumulative. The data was gathered from Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. From age 35 to age 42, as age increases,more women started taking annual mammograms as well. . At the age of 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly and it keeps around  80 percent. At the end of  this trendline, there is still 20 percent of the women who haven't received a screening mammogram each year and they are unlikely to have them if they didn’t start it before 42. 
+
+
+#Discussion
+
+In this paper, we replicate the original paper by making the Mammography rates versus age graph. We also create a figure comparing mammography screening amounts with different states in the US. Apart from these, we visualize the screening rates by age for patients with and without health insurance. We learned that senior citizens tend to take less mammography screening without health insurance from our figures. Since in the US,  the average cost for screening mammography ranges from about $100 to $250, [@costofmam] our results suggest that old citizens are less willing to spend money on Mammography screenings. Another finding we discovered from our figures is that some states have been more influenced by mammography recommendations at 40 than others. Unfortunately, we do not have enough data to investigate the relationship between breast cancer mortality rates and the share of having mammography screening in the population. However, our research shows that there is no evidence they are related.  \n
+
+
+One of the significant weaknesses of the paper is our data sources are minimal. We only have one dataset from the BRFSS survey results. People taking the survey may not represent the rest of the population in the US; as a result, our data collected may be biased towards certain groups of people. Another weakness is we cannot verify whether breast cancer mortality rates went down with regular mammography screening by using our data. To extend our study in the future, we can investigate the relationship between mammography rates and other interesting variables, such as physical breast exams. A physical breast exam is another common exam for checking breast cancers. It can detect a lump in your breast and other changes that might require more testing. [@parenthood]  It is controversial whether women should take one or the other or both. Last but not least, for the further step, we can build a prediction model for predicting the breast cancer survival rates with the mammography rates variable and age variable.  \n
 
 
 # References
