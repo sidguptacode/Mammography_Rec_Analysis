@@ -11,6 +11,9 @@ output:
 toc: FALSE
 bibliography: references.bib
 ---
+```{r}
+knitr::opts_chunk$set(tidy = TRUE, tidy.opts = list(comment = FALSE))
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -48,7 +51,7 @@ The paper follows the sections of Data in which we talk about the data in detail
 ################ Begin the data reading process ################
 ```
 
-```{r, echo = FALSE, message=FALSE, cache=TRUE}
+```{r, message=FALSE, cache=TRUE, warning = FALSE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -132,17 +135,17 @@ brfss_data <- do.call(rbind, brfss_dfs)
 ```
 
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
+```{r, message=FALSE, cache=TRUE, warning = FALSE}
 # Read the data about breast cancer deaths.
 bc_deaths <- read.delim(
   here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
-```{r, echo = FALSE, message=FALSE, warning=FALSE}
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r, mamogram_rate, fig.align='center'}
+```{r, mamogram_rate, fig.align='center', message=FALSE, warning = FALSE}
 
 dist_mam <- 
   brfss_data |>
@@ -173,7 +176,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r, breast_cancer_deaths, replicate Figure5}
+```{r, breast_cancer_deaths, replicate Figure5, message=FALSE, warning = FALSE}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -188,23 +191,10 @@ dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
   theme_minimal()
 ```
 
-```{r}
-################ Begin plotting: Our custom figures ################
-```
 
-```{r}
-# Helper functions which we will use.
+```{r, message=FALSE, warning = FALSE}
 single_df_barplot <- function(df, xcol, xlab, ylab, title, font_size) {
-  ###   Intakes a dataframe with two columns representing x, y values, and plots a bar plot.
-  ###   Arguments and preconditions:
-  ###   df: a tibble dataframe
-  ###   xcol: a character string denoting the column for the x-values in the df
-  ###   ycol:  a character string denoting the column for the y-values in the df
-  ###   title: a character string denoting the title of the plot
-  ###   xlab:  a character string denoting the x-label of the plot
-  ###   ylab:  a character string denoting the y-label of the plot
-  ###   large_font: a number determining the font size of the plots.
-  ###   xcol and ycol must be columns in df.
+  
   barplot <- ggplot(data=df, aes(.data[[xcol]])) +
     geom_bar() +
     ggtitle(title) +
@@ -230,12 +220,12 @@ plot_df_group <- function(df, group_col, plot_fn) {
 }
 ```
 
-```{r, mamograms_by_state, fig.width=20, fig.height=20} 
+```{r, mamograms_by_state, fig.width=20, fig.height=20, message=FALSE, warning = FALSE} 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
 ```
 
 
-```{r, mamograms_by_insurance, fig.width=20, fig.height=10}  
+```{r, mamograms_by_insurance, fig.width=20, fig.height=10, message=FALSE, warning = FALSE}  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
@@ -260,7 +250,7 @@ To begin our study, we replicated a visualization from Einav et al’s study whi
 
 #Discussion
 
-In this paper, we replicate the original paper by making the Mammography rates versus age graph. We also create a figure comparing mammography screening amounts with different states in the US. Apart from these, we visualize the screening rates by age for patients with and without health insurance. We learned that senior citizens tend to take less mammography screening without health insurance from our figures. Since in the US,  the average cost for screening mammography ranges from about $100 to $250, [@costofmam] our results suggest that old citizens are less willing to spend money on Mammography screenings. Another finding we discovered from our figures is that some states have been more influenced by mammography recommendations at 40 than others. Unfortunately, we do not have enough data to investigate the relationship between breast cancer mortality rates and the share of having mammography screening in the population. However, our research shows that there is no evidence they are related.
+In this paper, we replicate the original paper by making the Mammography rates versus age graph. We also create a figure comparing mammography screening amounts with different states in the US. Apart from these, we visualize the screening rates by age for patients with and without health insurance. We learned that senior citizens tend to take less mammography screening without health insurance from our figures. Since in the US,  the average cost for screening mammography ranges from about 151 dollars to 751 dollars, [@intro6] our results suggest that old citizens are less willing to spend money on Mammography screenings. Another finding we discovered from our figures is that some states have been more influenced by mammography recommendations at 40 than others. Unfortunately, we do not have enough data to investigate the relationship between breast cancer mortality rates and the share of having mammography screening in the population. However, our research shows that there is no evidence they are related.
 
 In this study, we are particularly interested in the screening mammography rates, so we select the relevant information that might be relevant to taking mammography from the original data. To study how widespread mammography screenings are in each age group of the population and visualize the growth in the number of people opting for a mammography screening,  we replicate the original paper by making the Mammography rates versus age graph with women who have health insurance. Since our data is based on the U.S. population, and unlike Canada, each state in the U.S. will have different health insurance policies against mammograms. The public acceptance of mammography screening might also vary. To further investigate what groups are most influenced by the original recommendation age (40),  we divide our data into different states of the U.S. We create figures comparing mammography screening amounts versus age under each state. We did another group division by comparing people with health insurance and people without health insurance to extend our work. We believe that one of the reasons to influence someone to take a mammogram is whether they have health insurance. To extend our work, we visualize the screening rates by age for patients with and without health insurance and try to compare how the distributions in each age group perform.
 
