@@ -145,8 +145,6 @@ bc_deaths <- read.delim(
 ################ Begin plotting: Figure 1 ################
 ```
 
-\@ref{mammogram_rate}
-
 ```{r mamogram_rate, fig.align='center'}
 
 dist_mam <- 
