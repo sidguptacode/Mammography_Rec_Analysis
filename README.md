@@ -5,13 +5,15 @@
 <h2 align="center"> Authors </h2>
 <center>
 
-[Sidharth Gupta*](cs.toronto.edu/~sidgupta/)
+Sidharth Gupta
+Sevnur Kulak
+Dongqi Bi
 </center>
 
 
 <h2 align="center"> Abstract </h2>
 <p align="justify">
-Data about the sources of COVID-19 infection can be used to guide epidemic and lockdown policies as the pandemic evolves; however almost half of COVID-19 cases in Toronto have no information about their source. In this paper we analyze the patient demographics of these cases with no information, and when they occur. We identify both groups of patients and time-points in the pandemic where there is a large proportion of cases with no source information. Our results can be used to improve the current methods for collecting data about COVID-19 cases in Toronto and other regions so that more sources of infection can be identified.
+
 </p>
 
 To run the code which performs our analysis, make sure you execute the following two steps first:
