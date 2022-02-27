@@ -47,7 +47,7 @@ The paper follows the sections of Data in which we talk about the data in detail
 ################ Begin the data reading process ################
 ```
 
-```{r, message=FALSE, cache=TRUE, warning = FALSE}
+```{r, message=FALSE, cache=TRUE, warning = FALSE, echo = FALSE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -131,17 +131,17 @@ brfss_data <- do.call(rbind, brfss_dfs)
 ```
 
 
-```{r, message=FALSE, cache=TRUE, warning = FALSE}
+```{r, message=FALSE, cache=TRUE, warning = FALSE, echo = FALSE}
 # Read the data about breast cancer deaths.
 bc_deaths <- read.delim(
   here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
-```{r, echo = FALSE, message=FALSE, warning = FALSE}
+```{r, echo = FALSE, message=FALSE, warning = FALSE, echo = FALSE}
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r, mamogram_rate, fig.align='center', message=FALSE, warning = FALSE}
+```{r, mamogram_rate, fig.align='center', message=FALSE, echo = FALSE, warning = FALSE}
 
 dist_mam <- 
   brfss_data |>
@@ -172,7 +172,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r, breast_cancer_deaths, replicate Figure5, message=FALSE, warning = FALSE}
+```{r, breast_cancer_deaths, replicate Figure5, message=FALSE, echo = FALSE, warning = FALSE}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -188,7 +188,7 @@ dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
 ```
 
 
-```{r, message=FALSE, warning = FALSE}
+```{r, message=FALSE, warning = FALSE, echo = FALSE}
 single_df_barplot <- function(df, xcol, xlab, ylab, title, font_size) {
   
   barplot <- ggplot(data=df, aes(.data[[xcol]])) +
@@ -217,12 +217,12 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 
-```{r mamograms_by_state, fig.width=70, fig.height=70} 
+```{r mamograms_by_state, fig.width=70, fig.height=70, echo = FALSE} 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
 
 
-```{r mamograms_by_insurance, fig.width=20, fig.height=20}  
+```{r mamograms_by_insurance, fig.width=20, fig.height=20, echo = FALSE}  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
