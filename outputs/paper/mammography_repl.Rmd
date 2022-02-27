@@ -210,12 +210,7 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 
-<<<<<<< HEAD
-
-```{r, mamograms_by_state, fig.width=70, fig.height=70, echo = FALSE, message=FALSE, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE}
-=======
 ```{r, mamograms_by_state, fig.width=70, fig.height=70, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE, echo=FALSE}
->>>>>>> 051003e0700fd77e76dbf5e71c85f9d651617b69
 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
