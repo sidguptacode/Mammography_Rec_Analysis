@@ -1,5 +1,5 @@
 ---
-title: "TODO"
+title: "Raw mammography demographics identify important lifestyle features when recommending a screening"
 subtitle: "TODO"
 author: 
   - TODO
@@ -24,6 +24,7 @@ library(forcats)
 library(knitr)
 library(janitor)
 library(lubridate)
+library(opendatatoronto)
 library(tidyverse)
 library(tidyr)
 library(wrapr)
@@ -44,12 +45,7 @@ Notes:
 ################ Begin the data reading process ################
 ```
 
-```{r}
-# Import helper functions used throughout the project.
-#source(here::here("scripts/00-helpers.R"), local = knitr::knit_global())
-```
-
-```{r, cache=TRUE}
+```{r, echo = FALSE, message=FALSE, cache=TRUE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -129,19 +125,21 @@ brfss_dfs <- lapply(brfss_data_paths, read_and_clean_brfss)
 
 # Concatenate all of the BRFSS dataframes into one
 brfss_data <- do.call(rbind, brfss_dfs)
+
 ```
 
-```{r}
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 # Read the data about breast cancer deaths.
 bc_deaths <- read.delim(
   here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r, replicate Figure A.1, fig.align='center'}
+```{r, mamogram_rate, fig.align='center'}
 
 dist_mam <- 
   brfss_data |>
@@ -171,14 +169,21 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 
 ```
-```{r, replicate Figure5}
+
+```{r, breast_cancer_deaths, replicate Figure5}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
   summarize(deaths = sum(bc_deaths))
-dist_deaths
+dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
+  geom_point(color = "grey")+
+  geom_line(color = "grey")+
+  xlim(35, 50)+
+  scale_y_continuous(breaks=seq(0, 0.7, by = 0.1))+
+  labs(x = "Age", y ="Share who had a mammogram",
+       title = "Mammogram rate in survey, by age")+
+  theme_minimal()
 ```
-
 
 ```{r}
 ################ Begin plotting: Our custom figures ################
@@ -186,7 +191,7 @@ dist_deaths
 
 ```{r}
 # Helper functions which we will use.
-single_df_barplot <- function(df, xcol, xlab, ylab, title) {
+single_df_barplot <- function(df, xcol, xlab, ylab, title, font_size) {
   ###   Intakes a dataframe with two columns representing x, y values, and plots a bar plot.
   ###   Arguments and preconditions:
   ###   df: a tibble dataframe
@@ -195,13 +200,15 @@ single_df_barplot <- function(df, xcol, xlab, ylab, title) {
   ###   title: a character string denoting the title of the plot
   ###   xlab:  a character string denoting the x-label of the plot
   ###   ylab:  a character string denoting the y-label of the plot
+  ###   large_font: a number determining the font size of the plots.
   ###   xcol and ycol must be columns in df.
   barplot <- ggplot(data=df, aes(.data[[xcol]])) +
     geom_bar() +
     ggtitle(title) +
     xlab(xlab) +
     ylab(ylab) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme(text = element_text(size = font_size)) 
   return(barplot)
 }
 
@@ -220,8 +227,20 @@ plot_df_group <- function(df, group_col, plot_fn) {
 }
 ```
 
-```{r, fig.width=20, fig.height=20}  
-plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "))})
+```{r, mamograms_by_state, fig.width=20, fig.height=20} 
+plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
+```
+
+
+```{r, mamograms_by_insurance, fig.width=20, fig.height=10}  
+# Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
+health_ins_map <- new.env()
+health_ins_map[['1']] = 'health insurance: yes'
+health_ins_map[['2']] = 'health insurance: no'
+health_ins_map[['7']] = 'health insurance: I don\'t know'
+health_ins_map[['9']] = 'health insurance: refused'
+
+plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count - ", health_ins_map[[as.character(df$hlthplan[1])]], sep=" "), 40)})
 ```
 
 # Data
