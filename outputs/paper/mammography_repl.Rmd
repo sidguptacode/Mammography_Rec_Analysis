@@ -30,9 +30,6 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-#Abstract
-
-
 # Introduction
 
 Cancer is one of the most detrimental diseases of the 21st century. Besides it has many types, breast cancer is the most common cancer in women worldwide and the second most common cancer overall according to World Cancer Research Fund [@intro1]. Because breast cancer is a big part of the detrimental cancer family, it is important to use the right tools at the right time for the right people to diagnose. There are several screening tools for breast cancers such as mammography, MRIs, or clinical breast examination [@intro2]. Recent research suggests that the number of women who received mammograms has been increasing significantly and mammograms might even be overused at an earlier age [@intro3].  Moreover, it is one of the most common myths that mammograms guarantee that breast cancer will be found early with the utilization of mammograms. However, in fact that is not completely true. Although mammograms are the greatest tools for breast cancer diagnosis, they do not guarantee true detection at early stages [@intro4]. 
