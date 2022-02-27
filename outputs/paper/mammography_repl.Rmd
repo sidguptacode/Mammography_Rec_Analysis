@@ -142,7 +142,7 @@ bc_deaths <- read.delim(
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r mamogram_rate, fig.align='center'}
+```{r, mamogram_rate, fig.align='center'}
 
 dist_mam <- 
   brfss_data |>
@@ -173,7 +173,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r breast_cancer_deaths, replicate Figure5}
+```{r, breast_cancer_deaths, replicate Figure5}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -230,12 +230,12 @@ plot_df_group <- function(df, group_col, plot_fn) {
 }
 ```
 
-```{r mamograms_by_state, fig.width=20, fig.height=20} 
+```{r, mamograms_by_state, fig.width=20, fig.height=20} 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
 ```
 
 
-```{r mamograms_by_insurance, fig.width=20, fig.height=10}  
+```{r, mamograms_by_insurance, fig.width=20, fig.height=10}  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
