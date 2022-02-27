@@ -5,7 +5,7 @@ author:
   - TODO
 thanks: "Code and data are available at: https://github.com/sidguptacode/Mammography_Rec_Analysis"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "TODO"
+abstract: "The existing recommendation to receive a mammogramaphy in the US is the age of 40, which might be influential as the raw data shows since the rate of mammography screening past that age is significantly increased. In their paper, Einav et al. found that breast cancer mortality does not increase significantly past the age of 40, suggesting that this recommendation should be reworked. In this paper,r we replicate the study done by Einav et al. and extend it by visualizing mammography screening rates by age for different states in the US as well as visualizing the screening rates by age for patients with and without health insurance. Our extensions identify which states and insurance groups are most influenced by the original recommendation and would benefit most by a reworked version, suggesting priority can be assigned to the groups we find for reworking mammography recommendations."
 output:
   bookdown::pdf_document2
 toc: FALSE
@@ -32,7 +32,6 @@ library(gridExtra)
 
 #Abstract
 
-The existing recommendation to receive a mammogramaphy in the US is the age of 40, which might be influential as the raw data shows since the rate of mammography screening past that age is significantly increased. In their paper, Einav et al. found that breast cancer mortality does not increase significantly past the age of 40, suggesting that this recommendation should be reworked. In this paper,r we replicate the study done by Einav et al. and extend it by visualizing mammography screening rates by age for different states in the US as well as visualizing the screening rates by age for patients with and without health insurance. Our extensions identify which states and insurance groups are most influenced by the original recommendation and would benefit most by a reworked version, suggesting priority can be assigned to the groups we find for reworking mammography recommendations. 
 
 # Introduction
 
@@ -230,12 +229,12 @@ plot_df_group <- function(df, group_col, plot_fn) {
 }
 ```
 
-```{r mamograms_by_state, fig.width=20, fig.height=20} 
-plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
+```{r mamograms_by_state, fig.width=70, fig.height=70} 
+plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
 
 
-```{r mamograms_by_insurance, fig.width=20, fig.height=10}  
+```{r mamograms_by_insurance, fig.width=20, fig.height=20}  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
@@ -243,7 +242,7 @@ health_ins_map[['2']] = 'health insurance: no'
 health_ins_map[['7']] = 'health insurance: I don\'t know'
 health_ins_map[['9']] = 'health insurance: refused'
 
-plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count - ", health_ins_map[[as.character(df$hlthplan[1])]], sep=" "), 40)})
+plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count - ", health_ins_map[[as.character(df$hlthplan[1])]], sep=" "), 18)})
 ```
 
 # Data
