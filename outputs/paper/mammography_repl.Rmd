@@ -1,8 +1,10 @@
 ---
-title: "Raw mammography demographics identify important lifestyle features when recommending a screening"
-subtitle: "TODO"
+title: "Raw Mammography Demographics show Potential Groups That Will Be Affected From Reworking the Mammogram Recommendation"
+
 author: 
-  - TODO
+  - Sidharth Gupta
+  - Sevnur Kulak
+  - Dongqi Bi
 thanks: "Code and data are available at: https://github.com/sidguptacode/Mammography_Rec_Analysis"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 abstract: "The existing recommendation to receive a mammogram in the US is the age of 40, which might be influential as the raw data shows since the rate of mammography screening past that age is significantly increased. In their paper, Einav et al. found that breast cancer mortality does not increase significantly past the age of 40, suggesting that this recommendation should be reworked. In this paper, we replicate the study done by Einav et al. and extend it by visualizing mammography screening rates by age for different states in the US as well as visualizing the screening rates by age for patients with and without health insurance. Our extensions identify which states and insurance groups are most influenced by the original recommendation and would benefit most by a reworked version, suggesting priority can be assigned to the groups we find for reworking mammography recommendations."
@@ -11,9 +13,6 @@ output:
 toc: FALSE
 bibliography: references.bib
 ---
-```{r}
-knitr::opts_chunk$set(tidy = TRUE, tidy.opts = list(comment = FALSE))
-```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -41,12 +40,16 @@ When the ambiguity of the true benefit of mammograms on early age women is taken
 The paper follows the sections of Data in which we talk about the data in detail and analyze the plots we have. Then the Results section will elaborate more on the analysis of data from different aspects. In the Discussion part, we will mention some of the weaknesses and biases of the paper as well as potential further research areas.  
 
 
+<<<<<<< HEAD
 
 ```{r}
 ################ Begin the data reading process ################
 ```
 
 ```{r, message=FALSE, cache=TRUE, warning = FALSE, echo = FALSE}
+=======
+```{r, message=FALSE, cache=TRUE, warning = FALSE, echo=FALSE}
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -119,7 +122,6 @@ clean_brfss_df <- function(brfss_data) {
 read_and_clean_brfss <- function(xpt_file_path) {
   brfss_data <- read_xpt_file(xpt_file_path)
   brfss_cleaned <- clean_brfss_df(brfss_data)
-  print(paste("Sucessfully read: ", xpt_file_path, sep=" "))
   return(brfss_cleaned)
 }
 brfss_dfs <- lapply(brfss_data_paths, read_and_clean_brfss)
@@ -130,17 +132,29 @@ brfss_data <- do.call(rbind, brfss_dfs)
 ```
 
 
+<<<<<<< HEAD
 ```{r, message=FALSE, cache=TRUE, warning = FALSE, echo = FALSE}
+=======
+```{r, message=FALSE, cache=TRUE, warning = FALSE, echo=FALSE}
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 # Read the data about breast cancer deaths.
 bc_deaths <- read.delim(
   here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
+<<<<<<< HEAD
 ```{r, echo = FALSE, message=FALSE, warning = FALSE, echo = FALSE}
 ################ Begin plotting: Figure 1 ################
 ```
 
 ```{r, mamogram_rate, fig.align='center', message=FALSE, echo = FALSE, warning = FALSE}
+=======
+```{r, echo = FALSE, message=FALSE, warning = FALSE, echo=FALSE}
+################ Begin plotting: Figure 1 ################
+```
+
+```{r, mamogram_rate, echo = FALSE, message=FALSE, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE}
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 
 dist_mam <- 
   brfss_data |>
@@ -171,7 +185,12 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
+<<<<<<< HEAD
 ```{r, breast_cancer_deaths, replicate Figure5, message=FALSE, echo = FALSE, warning = FALSE}
+=======
+```{r, breast_cancer_deaths, echo = FALSE, message=FALSE, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE}
+
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -187,7 +206,12 @@ dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
 ```
 
 
+<<<<<<< HEAD
 ```{r, message=FALSE, warning = FALSE, echo = FALSE}
+=======
+```{r, message=FALSE, echo = FALSE, message=FALSE, warning=FALSE}
+
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 single_df_barplot <- function(df, xcol, xlab, ylab, title, font_size) {
   
   barplot <- ggplot(data=df, aes(.data[[xcol]])) +
@@ -216,12 +240,22 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 
+<<<<<<< HEAD
 ```{r mamograms_by_state, fig.width=70, fig.height=70, echo = FALSE} 
+=======
+```{r, mamograms_by_state, fig.width=70, fig.height=70, echo = FALSE, message=FALSE, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE}
+
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
 
 
+<<<<<<< HEAD
 ```{r mamograms_by_insurance, fig.width=20, fig.height=20, echo = FALSE}  
+=======
+```{r, mamograms_by_insurance, fig.width=20, fig.height=20, fig.align='center', echo = FALSE, message=FALSE, fig.cap="Comparing the normalized income indices (in red) of the top 30 neighbourhoods with high proportions (in blue) of no source information.", warning=FALSE}
+ 
+>>>>>>> 70cb6cbf0f74789e588bbb238375f115a24418c5
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
@@ -237,10 +271,10 @@ plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age",
 In this paper, we make use of two publicly available datasets from Einav et al.’s study. The first is the Behavioral Risk Factor Surveillance System (BRFSS) dataset [@cdcbrfss], which is curated by the Center for Disease Control and Prevention (CDC), and aims to collect tabular data about health behaviors from US civilians. Each year about 400,000 adults are interviewed over a landline phone across all 50 states in the US, and asked between 200 and 300 questions about their health. These questions span several broad categories such as physical activity levels, diet, dental hygiene, drug use, sensitivity to diseases, heart conditions, cancers, and more. Our specific study focuses on questions related to mammograms, states, and health insurance. Selecting only those questions, we portray the first row of the BRFSS dataset in Table \@ref(tab:first-row-brfss). Our study chose the categories of states and health insurance in particular because we wanted to identify the groups who would benefit most from reworking the mammogram recommendation. Our hypothesis is that the varying healthcare policies in different states in the US makes some states more at-risk than others with this recommendation. In addition, we hypothesized that civilians without health insurance would be vulnerable to this recommendation and wanted to explore that targeted group. We elaborate on how we attest this hypothesis in the discussion section as well as discuss ideas for future work that make use of the many remaining fields in the BRFSS dataset.
 
 
-Our second dataset is a version of the NBER dataset [@NBERw8134] that was already processed by Einav et al.'s study. The raw NBER dataset contains records of death causes in various US states from 1963 to 2012 and the processed version returns a count of breast cancer deaths for each year. The processed NBER dataset has been made open-source, while the raw NBER dataset requires private access. For the benefit of reproducibility, we chose to use the open-source version of the dataset so that our current results can be easily extended; however with access to the raw NBER dataset, more fields surrounding breast cancer deaths could be explored such as deaths related to melanoma or related cancers. The first four rows in the processed NBER dataset are shown in Table \@ref(tab:first-row-nber). 
+Our second dataset is a version of the NBER dataset [@NBERw8134] which was already processed by Einav et al.'s study. The raw NBER dataset contains records of death causes in various US states from 1963 to 2012 and the processed version returns a count of breast cancer deaths for each year. The processed NBER dataset has been made open-source, while the raw NBER dataset requires private access. For the benefit of reproducibility, we chose to use the open-source version of the dataset so that our current results can be easily extended; however with access to the raw NBER dataset, more fields surrounding breast cancer deaths could be explored such as deaths related to melanoma or related cancers. The first four rows in the processed NBER dataset are shown in Table \@ref(tab:first-row-nber). 
 
 
-There might be biases in both of these datasets, and those biases are discussed thoroughly in our Discussion section \@ref(Discussion).
+There might be biases in both of these datasets, and those biases are discussed thoroughly in our Discussion section.
 
 
 ```{r first-row-brfss, echo = FALSE}
@@ -265,15 +299,11 @@ knitr::kable(head(dist_mam, n=4),
 
 # Results
 
-Implementation wise, we replicated and extended Einav et al’s study using the R programming language [@citeR]. We started by downloading the BRFSS dataset for each year from the CDC website, and loading it using the Tidyverse and Tidyr libraries [@thereferencecanbewhatever] [@tidyrcite].
-The BRFSS datasets were downloaded in XPT format, and were read into dataframes using the Haven library [@havencit]. Each dataframe was cleaned in the same way, using the renaming and removal functionality in the Janitor, Wrapr, and Forcats libraries [@janitorcite] [@wraprcite] [@forcatscite]. Each US state in the BRFSS was represented with its FIPS code, and we wanted to represent the states using their two-letter abbreviations instead. To do this, we made use of another dataset that contained a CSV of state FIPS codes and state abbreviation codes [@bureau_2021]. We created a hashmap using the Hash library [@hashcite], and renamed each FIPS code with its state abbreviation. Columns about mammography, state, and healthplan were then selected using the dplyer library [@dplyr]. We also used hashmaps to map the code responses from the health insurance column to human-interpretable values (for instance; 1 is a yes, 2 is a no). Each dataframe was finally concatenated into one final dataframe, and the ggplot2, gridExtra libraries [@ggplot2cite] [@gridextracite] was used to generate all of our figures. Our final results were rendered using the Knitr library [@knitr]
+Implementation wise, we replicated and extended Einav et al.’s study using the R programming language [@citeR]. We started by downloading the BRFSS dataset for each year from the CDC website, loading it using the Tidyverse library [@thereferencecanbewhatever] [@tidyrcite].
+The BRFSS datasets were downloaded in XPT format and were read into dataframes using the Haven library [@havencit]. Each data frame was cleaned in the same way, using the renaming and removal functionality in the Janitor library [@janitorcite] [@wraprcite] [@forcatscite]. Each US state in the BRFSS was represented with its FIPS code and we wanted to represent the states using their two-letter abbreviations instead. To do this, we made use of another dataset that contained a CSV of state FIPS codes and state abbreviation codes [@bureau_2021]. We created a hashmap using the Hash library [@hashcite] and renamed each FIPS code with its state abbreviation. Columns about mammography, state, and healthplan were then selected using the dplyr library [@dplyr]. We also used hashmaps to map the code responses from the health insurance column to human-interpretable values (for instance; 1 is a yes, 2 is a no). Each data frame was finally concatenated into one final dataframe and the ggplot library [@ggplot2cite] was used to generate all of our figures.
 
 
-To begin our study, we replicated a visualization from Einav et al’s study which plots the distribution of mammograms across different age groups, as shown in Figure \@ref(fig:mamogram_rate). As mentioned, we constrained our study to use open-source data, and so our plot differs from Einav et al's study as it does not plot results from the private-access HCCI claims dataset. We only used data from the even years from 2000 to 2012 and filtered out participants without health insurance; however in our extensions we use data from every year in the BRFSS and included participants without health insurance. The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. As shown in the graph, it should be strictly increasing since it is cumulative. The data was gathered from the Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure, we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. More women started taking annual mammograms from age 35 to age 42 as age increased. At 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly, and it keeps around  80 percent. At the end of this trendline, there is still 20 percent of the women who have not received a screening mammogram each year, and they are unlikely to have them if they did not start it before 42. 
-
-
-  The first figure we created shows the share of women who received a screening mammogram each year, by age. We are trying to replicate  figure A.1. from the original paper. Since we don’t have the dataset of the HCCI claims data. We replicated only the trendline with respect to the BRFSS survey.  The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. It should be strictly increasing as shown in the graph since it is cumulative. The data was gathered from Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. From age 35 to age 42, as age increases,more women started taking annual mammograms as well. . At the age of 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly and it keeps around  80 percent. At the end of  this trendline, there is still 20 percent of the women who haven't received a screening mammogram each year and they are unlikely to have them if they didn’t start it before 42. 
-
+To begin our study, we replicated a visualization from Einav et al.’s study, which plots the distribution of mammograms across different age groups, as shown in Figure \@ref(fig:mamogram_rate). As mentioned, we constrained our study to use open-source data, and so our plot differs from Einav et al.'s study as it does not plot results from the private-access HCCI claims dataset. We only used data from the even years from 2000 to 2012 and filtered out participants without health insurance; however in our extensions, we use data from every year in the BRFSS and included participants without health insurance. The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. As shown in the graph, it should be strictly increasing since it is cumulative. The data was gathered from the Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012 were used. From the figure, we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. More women started taking annual mammograms from age 35 to age 42 as age increased. At 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly and it becomes steady around 80 percent. At the end of this trendline, there is still 20 percent of the women who have not received a screening mammogram each year and they are unlikely to have them if they did not start it before 42. 
 
 Following this figure, we replicated another one from Einav et al.'s study using the processed NBER dataset in Figure \@ref(fig:breast_cancer_deaths). This figure visualizes the distribution of breast cancer deaths for each age as a trendline. An interesting observation about this figure is that it shows no significant age group that is more affected by breast cancer deaths. This gives evidence to the age-40 recommendation being redundant since the raw data shows no significant increase in breast cancer deaths at that age.
 Our next figure shows a similar plot to Figure \@ref(fig:mamogram_rate). Except it visualizes the distributions for each different state. To do this, we split the concatenated BRFSS data frame into a list containing 50 dataframes; one for each state. We plot the distribution for each state dataframe in the same way that was done for Figure \@ref(fig:mamogram_rate) into a grid of subplots. Our final results are shown in Figure \@ref(fig:mamograms_by_state). We conduct the exact same grouping process when visualizing the distributions for different health insurance groups and show those results in Figure \@ref(fig:mamograms_by_insurance).
@@ -285,7 +315,7 @@ In this paper, we replicate the original paper by making the Mammography rates v
 
 In this study, we are particularly interested in the screening mammography rates. So we selected information that might be relevant to receiving  mammography from the original data. To study how widespread mammography screenings are in each age group of the population and visualize the growth in the number of people opting for a mammography screening,  we replicated the original paper by making the mammography rates versus age graph with women who have health insurance. Since our data is based on the U.S. population, each state will have different health insurance policies against mammograms. The public acceptance of mammography screening might also vary. To further investigate what groups are most influenced by the original recommendation age of 40,  we divided our data into different states of the U.S. We created figures comparing mammography screening amounts versus age under each state. We also did another group division by comparing people with health insurance and people without health insurance to extend our work. We believe that one of the reasons to influence someone to take a mammogram is whether they have health insurance or not. To extend our work, we visualized the screening rates by age for patients with and without health insurance and tried  to compare how the distributions in each age group perform.
 
-	In our first figure \@ref(fig:mamogram_rate), we found that at the age of 43, the growth of the share who have had mammograms slows down and keeps the level around 70 percent, meaning that around 30 percent of the females eventually choose not to take the mammography screenings. The reason behind this choice varies. They may not believe mammograms prevent breast cancers or are confident about their health conditions, or their insurance only covers a portion of the expense, and they are not willing to spend on mammograms. Our second figure \@ref(fig:mamograms_by_state) discovers that some states had been more influenced by mammography recommendations at 40 than others. We see skewness in the distribution of the bar chart. When it is skewed to the left, people tend to have mammograms early, favoring the original recommendation age. States such as A.K., DC, and G.A. have skewed distributions to the left. Likewise, when it is skewed to the right, people tend to have the mammography later, favoring the new recommendation age. States such as N.E., AZ, and F.L. have skewed distributions to the left. Apart from these, we visualize the screening rates by age for patients with or without health insurance. In our third figure \@ref(fig:mamograms_by_insurance), we learned that senior citizens tend to take less mammography screening without health insurance. Since the average cost for screening mammography ranges from about $151 to $751 in the US, our results suggest that old citizens are less willing to spend money on mammography screenings [@intro6]. Again, possible reasons for this might be that senior people have less trust in mammography since it is a relatively new technology. They might also think that mammography screenings are overpriced; so they do not want to spend that much on examinations.  
+	In our first figure \@ref(fig:mamogram_rate), we found that at the age of 43, the growth of the share who have had mammograms slows down and keeps the level around 70 percent, meaning that around 30 percent of the females eventually choose not to take the mammography screenings. The reason behind this choice varies. They may not believe mammograms prevent breast cancers or are confident about their health conditions, or their insurance only covers a portion of the expense, and they are not willing to spend on mammograms. Our second figure \@ref(fig:mamograms_by_state) discovers that some states had been more influenced by mammography recommendations at 40 than others. We see skewness in the distribution of the bar chart. When it is skewed to the left, people tend to have mammograms early, favoring the original recommendation age. States such as A.K., DC, and G.A. have skewed distributions to the left. Likewise, when it is skewed to the right, people tend to have the mammography later, favoring the new recommendation age. States such as N.E., AZ, and F.L. have skewed distributions to the left. Apart from these, we visualize the screening rates by age for patients with or without health insurance. In our third figure \@ref(fig:mamograms_by_insurance), we learned that senior citizens tend to take less mammography screening without health insurance. Since the average cost for screening mammography ranges from about \$151 to \$751 in the US, our results suggest that old citizens are less willing to spend money on mammography screenings [@intro6]. Again, possible reasons for this might be that senior people have less trust in mammography since it is a relatively new technology. They might also think that mammography screenings are overpriced; so they do not want to spend that much on examinations.  
 
 One of the significant weaknesses of the paper is that our data sources are minimal. We only have one dataset from the BRFSS survey results. It would be better to have data from other sources as a comparison since, firstly, we cannot guarantee that the sample selection process of the BRFSS survey is randomly selected. It may not be the best representation of the rest of the population in the U.S. As a result, our data collection may be biased towards certain groups of people. Secondly, biases are caused by the nature of the survey; refusing to answer is one option for each question. This will affect the accuracy of our data counts as well. There are many different kinds of mammograms. For example, film-screen mammograms and digital mammograms are two different types of imaging; however, they diagnose different things. Unfortunately, the dataset we have does not indicate which type of mammograms the participant received. They are all performed in the same manner. The only difference is whether the photos are captured on photographic film or as digital files stored on a computer [@breastcancer]. In addition, there are other imaging diagnoses that are taken on the breast area such as MRIs, which are also meant to diagnose fundamentally different diseases. It is very easy for a participant to then confuse a mammogram with those diagnoses as well. The solution for minimizing the confusion among the participants is to have the definitions of mammograms stated in the questionnaire or explain them via phone when they receive the survey. We could investigate the accuracy of different types of mammography screenings with more data. Additionally, another weakness is that we cannot verify whether breast cancer mortality rates went down with regular mammography screening by using our data. We also have no other option to verify if a reworking of age recommendations would reduce the number of deaths caused by breast cancer. Other health problems caused by frequent mammograms might have more considerable consequences than the effect of preventing breast cancer. However, unfortunately, we do not have enough data to start this investigation. 
 
