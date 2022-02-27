@@ -1,7 +1,4 @@
 <h1 align="center"> Analyzing Mammography Recommendations </h1>
-<h1 align="center">
-  <img width="500" height="300" src="opening.png">
-</h1>
 <h2 align="center"> Authors </h2>
 <center>
 
@@ -20,21 +17,19 @@ To run the code which performs our analysis, make sure you execute the following
 ### 1. Installing the packages
 
 Install the following packages in your R environment:
-
-bookdown
-gridExtra
-hash
-hash
-dplyr
-forcats
-knitr
-janitor
-tidyverse
-tidyr
-wrapr
-haven
-ggplot2
-gridExtra
+- bookdown
+- gridExtra
+- hash
+- dplyr
+- forcats
+- knitr
+- janitor
+- tidyverse
+- tidyr
+- wrapr
+- haven
+- ggplot2
+- gridExtra
 ### 2. Downloading the data
 
 To download the public BRFSS dataset, visit https://www.cdc.gov/brfss/index.html.
