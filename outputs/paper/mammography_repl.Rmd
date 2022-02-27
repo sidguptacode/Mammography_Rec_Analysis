@@ -165,10 +165,6 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 ```
 
 ```{r, breast-cancer-deaths, fig.cap="Distribution of breast cancer deaths over age", warning=FALSE, echo=FALSE}
-
-dist_deaths <- bc_deaths |>
-  group_by(age) |>
-  summarize(deaths = sum(bc_deaths))
 dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
   geom_point(color = "grey")+
   geom_line(color = "grey")+
