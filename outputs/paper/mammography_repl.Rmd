@@ -133,7 +133,7 @@ bc_deaths <- read.delim(
 
 
 
-```{r mamogram_rate, fig.cap="Mammogram Rate in Suvery by Age", warning=FALSE, echo=FALSE}
+```{r, mamogram_rate, fig.cap="Mammogram Rate in Suvery by age", warning=FALSE, echo=FALSE}
 
 dist_mam <- 
   brfss_data |>
@@ -164,7 +164,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r breast_cancer_deaths, fig.cap="Breast Cancer Deaths by Age", warning=FALSE, echo=FALSE}
+```{r, breast_cancer_deaths, fig.cap="Breast Cancer Deaths by Age", warning=FALSE, echo=FALSE}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -210,13 +210,13 @@ plot_df_group <- function(df, group_col, plot_fn) {
 ```
 
 
-```{r mamograms_by_state, fig.width=70, fig.height=70, fig.cap="Mamogram Distributions by states ", warning=FALSE, echo=FALSE}
+```{r, mamograms_by_state, fig.width=70, fig.height=70, fig.cap="Mamogram Distributions by states ", warning=FALSE, echo=FALSE}
 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 40)})
 ```
 
 
-```{r mamograms_by_insurance, fig.width=20, fig.height=20, fig.cap="Mamogram Distribution by Health Insurance", warning=FALSE, echo=FALSE}
+```{r, mamograms_by_insurance, fig.width=20, fig.height=20, fig.cap="Mamogram Distribution by Health Insurance", warning=FALSE, echo=FALSE}
  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
