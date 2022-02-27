@@ -18,13 +18,10 @@ knitr::opts_chunk$set(echo = TRUE)
 #install.packages('gridExtra')
 #install.packages("hash")
 library(hash)
-library(ggmap)
 library(dplyr)
 library(forcats)
 library(knitr)
 library(janitor)
-library(lubridate)
-library(opendatatoronto)
 library(tidyverse)
 library(tidyr)
 library(wrapr)
@@ -139,7 +136,7 @@ bc_deaths <- read.delim(
 ################ Begin plotting: Figure 1 ################
 ```
 
-```{r, mamogram_rate, fig.align='center'}
+```{r mamogram_rate, fig.align='center'}
 
 dist_mam <- 
   brfss_data |>
@@ -170,7 +167,7 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 
 ```
 
-```{r, breast_cancer_deaths, replicate Figure5}
+```{r breast_cancer_deaths, replicate Figure5}
 
 dist_deaths <- bc_deaths |>
   group_by(age) |>
@@ -227,12 +224,12 @@ plot_df_group <- function(df, group_col, plot_fn) {
 }
 ```
 
-```{r, mamograms_by_state, fig.width=20, fig.height=20} 
+```{r mamograms_by_state, fig.width=20, fig.height=20} 
 plot_df_group(brfss_data, "state", function(df) {single_df_barplot(df, "age", "Age", "Count", paste("Mammography count ", df$state[1], sep=" "), 32)})
 ```
 
 
-```{r, mamograms_by_insurance, fig.width=20, fig.height=10}  
+```{r mamograms_by_insurance, fig.width=20, fig.height=10}  
 # Substitute the health insurance responses (in integer format) using a hashmap that maps it to a human-readable string.
 health_ins_map <- new.env()
 health_ins_map[['1']] = 'health insurance: yes'
@@ -245,16 +242,22 @@ plot_df_group(brfss_data, "hlthplan", function(df) {single_df_barplot(df, "age",
 
 # Data
 
+Implementation wise, we replicated and extended Einav et al’s study using the R programming language [@citeR]. We started by downloading the BRFSS dataset for each year from the CDC website, and loading it using the Tidyverse and Tidyr libraries [@thereferencecanbewhatever] [@tidyrcite].
+The BRFSS datasets were downloaded in XPT format, and were read into dataframes using the Haven library [@havencit]. Each dataframe was cleaned in the same way, using the renaming and removal functionality in the Janitor, Wrapr, and Forcats libraries [@janitorcite] [@wraprcite] [@forcatscite]. Each US state in the BRFSS was represented with its FIPS code, and we wanted to represent the states using their two-letter abbreviations instead. To do this, we made use of another dataset that contained a CSV of state FIPS codes and state abbreviation codes [@bureau_2021]. We created a hashmap using the Hash library [@hashcite], and renamed each FIPS code with its state abbreviation. Columns about mammography, state, and healthplan were then selected using the dplyer library [@dplyer]. We also used hashmaps to map the code responses from the health insurance column to human-interpretable values (for instance; 1 is a yes, 2 is a no). Each dataframe was finally concatenated into one final dataframe, and the ggplot2 library [@ggplot2cite] was used to generate all of our figures.
+
+
+To begin our study, we replicated a visualization from Einav et al’s study which plots the distribution of mammograms across different age groups, as shown in Figure \@ref(fig:mamogram_rate). As mentioned, we constrained our study to use open-source data, and so our plot differs from Einav et al's study as it does not plot results from the private-access HCCI claims dataset. We only used data from the even years from 2000 to 2012 and filtered out participants without health insurance; however in our extensions we use data from every year in the BRFSS and included participants without health insurance. The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. As shown in the graph, it should be strictly increasing since it is cumulative. The data was gathered from the Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure, we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. More women started taking annual mammograms from age 35 to age 42 as age increased. At 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly, and it keeps around  80 percent. At the end of this trendline, there is still 20 percent of the women who have not received a screening mammogram each year, and they are unlikely to have them if they did not start it before 42. 
+
 
   The first figure we created shows the share of women who received a screening mammogram each year, by age. We are trying to replicate  figure A.1. from the original paper. Since we don’t have the dataset of the HCCI claims data. We replicated only the trendline with respect to the BRFSS survey.  The trendline we created is a cumulative function of the percentage of those who have received annual mammograms by their age. It should be strictly increasing as shown in the graph since it is cumulative. The data was gathered from Behavioral Risk Factor Surveillance System Survey (BRFSS), even years 2000-2012. From the figure we can see that at the age of 35, the share who received an annual mammogram is around 20 percent. From age 35 to age 42, as age increases,more women started taking annual mammograms as well. . At the age of 42, around 65 percent of the women population have received annual mammograms. After 42, the growth rate declines significantly and it keeps around  80 percent. At the end of  this trendline, there is still 20 percent of the women who haven't received a screening mammogram each year and they are unlikely to have them if they didn’t start it before 42. 
 
 
 #Discussion
 
-In this paper, we replicate the original paper by making the Mammography rates versus age graph. We also create a figure comparing mammography screening amounts with different states in the US. Apart from these, we visualize the screening rates by age for patients with and without health insurance. We learned that senior citizens tend to take less mammography screening without health insurance from our figures. Since in the US,  the average cost for screening mammography ranges from about $100 to $250, [@costofmam] our results suggest that old citizens are less willing to spend money on Mammography screenings. Another finding we discovered from our figures is that some states have been more influenced by mammography recommendations at 40 than others. Unfortunately, we do not have enough data to investigate the relationship between breast cancer mortality rates and the share of having mammography screening in the population. However, our research shows that there is no evidence they are related.  \n
+In this paper, we replicate the original paper by making the Mammography rates versus age graph. We also create a figure comparing mammography screening amounts with different states in the US. Apart from these, we visualize the screening rates by age for patients with and without health insurance. We learned that senior citizens tend to take less mammography screening without health insurance from our figures. Since in the US,  the average cost for screening mammography ranges from about $100 to $250, [@costofmam] our results suggest that old citizens are less willing to spend money on Mammography screenings. Another finding we discovered from our figures is that some states have been more influenced by mammography recommendations at 40 than others. Unfortunately, we do not have enough data to investigate the relationship between breast cancer mortality rates and the share of having mammography screening in the population. However, our research shows that there is no evidence they are related.
 
 
-One of the significant weaknesses of the paper is our data sources are minimal. We only have one dataset from the BRFSS survey results. People taking the survey may not represent the rest of the population in the US; as a result, our data collected may be biased towards certain groups of people. Another weakness is we cannot verify whether breast cancer mortality rates went down with regular mammography screening by using our data. To extend our study in the future, we can investigate the relationship between mammography rates and other interesting variables, such as physical breast exams. A physical breast exam is another common exam for checking breast cancers. It can detect a lump in your breast and other changes that might require more testing. [@parenthood]  It is controversial whether women should take one or the other or both. Last but not least, for the further step, we can build a prediction model for predicting the breast cancer survival rates with the mammography rates variable and age variable.  \n
+One of the significant weaknesses of the paper is our data sources are minimal. We only have one dataset from the BRFSS survey results. People taking the survey may not represent the rest of the population in the US; as a result, our data collected may be biased towards certain groups of people. Another weakness is we cannot verify whether breast cancer mortality rates went down with regular mammography screening by using our data. To extend our study in the future, we can investigate the relationship between mammography rates and other interesting variables, such as physical breast exams. A physical breast exam is another common exam for checking breast cancers. It can detect a lump in your breast and other changes that might require more testing. [@parenthood]  It is controversial whether women should take one or the other or both. Last but not least, for the further step, we can build a prediction model for predicting the breast cancer survival rates with the mammography rates variable and age variable.
 
 
 # References
