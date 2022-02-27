@@ -49,7 +49,7 @@ Notes:
 #source(here::here("scripts/00-helpers.R"), local = knitr::knit_global())
 ```
 
-```{r}
+```{r, cache=TRUE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
