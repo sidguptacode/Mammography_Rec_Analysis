@@ -45,7 +45,7 @@ Notes:
 ################ Begin the data reading process ################
 ```
 
-```{r}
+```{r, echo = FALSE, message=FALSE}
 # Read all of the BRFSS datasets (this takes some time, and should only be run once on startup).
 
 # Store all the dataset paths in a list.
@@ -129,13 +129,13 @@ brfss_data <- do.call(rbind, brfss_dfs)
 ```
 
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 # Read the data about breast cancer deaths.
 bc_deaths <- read.delim(
   here::here("inputs/data/bc_deaths_1959_2010.txt"), sep = ",")
 ```
 
-```{r}
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
 ################ Begin plotting: Figure 1 ################
 ```
 
@@ -174,7 +174,14 @@ ggplot(aes(age, share, fill = "BRFSS Survey"))+
 dist_deaths <- bc_deaths |>
   group_by(age) |>
   summarize(deaths = sum(bc_deaths))
-dist_deaths
+dist_deaths |> ggplot(aes(age, deaths, fill = "BRFSS Survey"))+
+  geom_point(color = "grey")+
+  geom_line(color = "grey")+
+  xlim(35, 50)+
+  scale_y_continuous(breaks=seq(0, 0.7, by = 0.1))+
+  labs(x = "Age", y ="Share who had a mammogram",
+       title = "Mammogram rate in survey, by age")+
+  theme_minimal()
 ```
 
 ```{r}
